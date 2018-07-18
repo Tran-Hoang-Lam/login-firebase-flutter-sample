@@ -96,17 +96,15 @@ class LoginScreenState extends State<LoginScreen> {
     formKey.currentState.save();
     formKey.currentState.reset();
 
-    DatabaseReference reference =  FirebaseService.firebaseDatabase
+    DatabaseReference reference = FirebaseService.firebaseDatabase
         .reference()
         .child(User.collection_name);
 
     print(reference.path);
 
-    reference.orderByChild('name').equalTo(user.name).onChildAdded
-        .listen
-        ((snapshot) {
-      if (snapshot.snapshot != null) {
-        user = User.fromSnapshot(snapshot.snapshot);
+    reference.orderByChild('name').equalTo(user.name).once().then((snapshot) {
+      if (snapshot != null) {
+        user = User.fromSnapshot(snapshot);
         print(user.name);
         print(user.password);
         print(user.avatar);
