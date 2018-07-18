@@ -1,4 +1,4 @@
-# login_firebase_flutter_example
+# Login with Firebase using Flutter Example
 
 A sample Flutter application.
 
