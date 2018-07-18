@@ -1,24 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:login_firebase_flutter_example/model/user.dart';
 import 'package:login_firebase_flutter_example/screen/home_screen.dart';
-import 'package:login_firebase_flutter_example/screen/register_screen.dart';
 import 'package:login_firebase_flutter_example/service/authentication_service.dart';
 
-class LoginScreen extends StatefulWidget {
-  static const String name = "/loginScreen";
+class RegisterScreen extends StatefulWidget {
+  static final String name = '/registerScreen';
 
   @override
   State<StatefulWidget> createState() {
-    return LoginScreenState();
+    return RegisterState();
   }
 }
 
-class LoginScreenState extends State<LoginScreen> {
+class RegisterState extends State<RegisterScreen> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   User user;
   AuthenticationService authenticationService = AuthenticationService();
+
+  DecorationImage backgroundImage = DecorationImage(
+      image: ExactAssetImage('asset/blur-background-6z-800x1280.jpg'),
+      fit: BoxFit.cover);
 
   @override
   void initState() {
@@ -26,50 +29,40 @@ class LoginScreenState extends State<LoginScreen> {
     user = User();
   }
 
-  DecorationImage backgroundImage = DecorationImage(
-      image: ExactAssetImage('asset/blur-background-6z-800x1280.jpg'),
-      fit: BoxFit.cover);
+  saveValue(String value, String attribute) {
+    switch (attribute) {
+      case 'Email':
+        user.email = value;
+        break;
+      case 'Display Name':
+        user.displayName = value;
+        break;
+      case 'Photo URL':
+        user.photoUrl = value;
+        break;
+      case 'Password':
+        user.password = value;
+        break;
+    }
+  }
 
-  Widget logo = Padding(
-      padding: EdgeInsets.only(top: 100.0, bottom: 20.0),
-      child: CircleAvatar(
-        backgroundColor: Colors.transparent,
-        radius: 90.0,
-        child: Image.asset('asset/flutter-logo-round.png'),
-      ));
-
-  Widget emailInputText() => Padding(
+  Widget inputText(String hintText, bool hideCharacter) => Padding(
       padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
       child: TextFormField(
-        onSaved: (value) => user.email = value,
+        onSaved: (value) => saveValue(value, hintText),
         keyboardType: TextInputType.text,
         autofocus: false,
         style: TextStyle(color: Colors.white),
+        obscureText: hideCharacter,
         decoration: InputDecoration(
-          hintText: 'Email',
+          hintText: hintText,
           contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
           hintStyle: TextStyle(color: Colors.white),
         ),
       ));
 
-  Widget passwordInputText() => Padding(
-      padding: EdgeInsets.only(top: 5.0, bottom: 20.0),
-      child: TextFormField(
-        onSaved: (value) => user.password = value,
-        keyboardType: TextInputType.text,
-        autofocus: false,
-        obscureText: true,
-        style: TextStyle(color: Colors.white),
-        decoration: InputDecoration(
-            hintText: 'Password',
-            contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-            border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
-            hintStyle: TextStyle(color: Colors.white)),
-      ));
-
-  Widget loginButton() => Padding(
+  Widget saveButton(BuildContext context) => Padding(
         padding: EdgeInsets.only(top: 30.0, bottom: 20.0),
         child: Material(
           borderRadius: BorderRadius.circular(30.0),
@@ -78,36 +71,27 @@ class LoginScreenState extends State<LoginScreen> {
             elevation: 5.0,
             color: Colors.blue,
             onPressed: () {
-              doLogin();
+              doRegist();
             },
             child: Text(
-              'Login',
+              'Regist',
               style: TextStyle(color: Colors.white),
             ),
           ),
         ),
       );
 
-  Widget registerText() => FlatButton(
-        child: Text(
-          'Register',
-          style: TextStyle(color: Colors.white),
-        ),
-        onPressed: () => Navigator.of(context).pushNamed(RegisterScreen.name),
-      );
-
-  void doLogin() {
+  void doRegist() {
     formKey.currentState.save();
-    formKey.currentState.reset();
 
-    authenticationService.verifyUser(user).then((user) {
+    authenticationService.createUser(user).then((user) {
       Navigator
           .of(context)
           .push(MaterialPageRoute(builder: (context) => HomeScreen(user)));
     }).catchError((error) {
       print(error);
       scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text('Login Fail!!!'),
+        content: Text('Register Fail!!!'),
         duration: Duration(seconds: 3),
       ));
     });
@@ -127,11 +111,14 @@ class LoginScreenState extends State<LoginScreen> {
                   key: formKey,
                   child: Column(
                     children: <Widget>[
-                      logo,
-                      emailInputText(),
-                      passwordInputText(),
-                      loginButton(),
-                      registerText()
+                      SizedBox(
+                        height: 100.0,
+                      ),
+                      inputText('Display Name', false),
+                      inputText('Photo URL', false),
+                      inputText('Email', false),
+                      inputText('Password', true),
+                      saveButton(context),
                     ],
                   )),
             ),
