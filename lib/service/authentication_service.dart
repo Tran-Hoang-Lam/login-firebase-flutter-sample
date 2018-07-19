@@ -21,8 +21,8 @@ class AuthenticationService {
     try {
       await firebaseAuth.createUserWithEmailAndPassword(email: user.email, password: user.password);
       UserUpdateInfo userUpdateInfo = UserUpdateInfo();
-      userUpdateInfo.displayName = user.displayName;
-      userUpdateInfo.photoUrl = user.photoUrl;
+      userUpdateInfo.displayName = user.displayName == null ? '' : user.displayName;
+      userUpdateInfo.photoUrl = user.photoUrl == null ? '' : user.photoUrl;
       await firebaseAuth.updateProfile(userUpdateInfo);
 
       currentUser = await firebaseAuth.currentUser();

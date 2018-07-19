@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:login_firebase_flutter_example/model/user.dart';
 import 'package:login_firebase_flutter_example/screen/home_screen.dart';
 import 'package:login_firebase_flutter_example/screen/register_screen.dart';
@@ -107,7 +108,7 @@ class LoginScreenState extends State<LoginScreen> {
     }).catchError((error) {
       print(error);
       scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text('Login Fail!!!'),
+        content: Text('Login Fail!!! ' + error.message),
         duration: Duration(seconds: 3),
       ));
     });

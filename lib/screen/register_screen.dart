@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:login_firebase_flutter_example/model/user.dart';
 import 'package:login_firebase_flutter_example/screen/home_screen.dart';
 import 'package:login_firebase_flutter_example/service/authentication_service.dart';
@@ -91,7 +92,7 @@ class RegisterState extends State<RegisterScreen> {
     }).catchError((error) {
       print(error);
       scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text('Register Fail!!!'),
+        content: Text('Register Fail!!! ' + error.message),
         duration: Duration(seconds: 3),
       ));
     });

@@ -20,13 +20,13 @@ class HomeScreen extends StatelessWidget {
       child: CircleAvatar(
         backgroundColor: Colors.transparent,
         radius: 90.0,
-        child: Image.network(url),
+        child: url != null ? Image.network(url) : Image.asset('asset/flutter-logo-round.png'),
       ));
 
   Widget infoText(String info) => Padding(
       padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
       child: Text(
-        info,
+        info == null ? 'N/A' : info,
         style: TextStyle(color: Colors.white),
       ));
 
