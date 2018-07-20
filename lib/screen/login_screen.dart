@@ -117,6 +117,9 @@ class LoginScreenState extends State<LoginScreen> {
         content: Text('Login Fail!!! ' + error.message),
         duration: Duration(seconds: 3),
       ));
+      setState(() {
+        showLoadingIcon = false;
+      });
     });
   }
 

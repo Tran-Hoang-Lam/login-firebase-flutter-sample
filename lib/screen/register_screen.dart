@@ -132,6 +132,9 @@ class RegisterState extends State<RegisterScreen> {
         content: Text('Register Fail!!! ' + error.message),
         duration: Duration(seconds: 3),
       ));
+      setState(() {
+        showLoadingIcon = true;
+      });
     });
   }
 
