@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:login_firebase_flutter_example/configuration/application_configuration.dart';
 
 class FirebaseService {
   static FirebaseDatabase firebaseDatabase;
@@ -9,11 +10,12 @@ class FirebaseService {
   final Future<FirebaseApp> firebaseApp = FirebaseApp.configure(
     name: 'db',
       options: FirebaseOptions(
-          googleAppID: '1:972682480781:android:99f241b606307a18',
-          apiKey: 'AIzaSyCs0ii_-8ZtRm1pl1uido-BQlF16KwyoyI',
-          databaseURL: 'https://user-database-ed222.firebaseio.com')
+          googleAppID: ApplicationConfiguration.configMap['googleAppID'],
+          apiKey: ApplicationConfiguration.configMap['apiKey'],
+          databaseURL: ApplicationConfiguration.configMap['databaseURL'])
   ).then((app){
     firebaseDatabase = FirebaseDatabase(app: app);
+    firebaseDatabase.reference().child('');
   });
 
   FirebaseService.initDatabase () {

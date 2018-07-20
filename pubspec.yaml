@@ -31,6 +31,7 @@ flutter:
   assets:
     - asset/blur-background-6z-800x1280.jpg
     - asset/flutter-logo-round.png
+    - config.json
 
   # To add assets to your application, add an assets section, like this:
   # assets:
