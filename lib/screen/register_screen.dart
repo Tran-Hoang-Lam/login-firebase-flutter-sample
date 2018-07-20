@@ -19,6 +19,7 @@ class RegisterState extends State<RegisterScreen> {
 
   User user;
   AuthenticationService authenticationService = AuthenticationService();
+  bool showLoadingIcon;
 
   DecorationImage backgroundImage = DecorationImage(
       image: ExactAssetImage('asset/blur-background-6z-800x1280.jpg'),
@@ -28,6 +29,7 @@ class RegisterState extends State<RegisterScreen> {
   void initState() {
     super.initState();
     user = User();
+    showLoadingIcon = false;
   }
 
   saveValue(String value, String attribute) {
@@ -82,8 +84,43 @@ class RegisterState extends State<RegisterScreen> {
         ),
       );
 
+  Widget buildBody() {
+    if (showLoadingIcon) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    return SingleChildScrollView(
+      child: Container(
+        height: MediaQuery.of(context).size.height,
+        padding: EdgeInsets.only(left: 25.0, right: 25.0),
+        decoration: new BoxDecoration(image: backgroundImage),
+        child: Center(
+          child: Form(
+              key: formKey,
+              child: Column(
+                children: <Widget>[
+                  SizedBox(
+                    height: 100.0,
+                  ),
+                  inputText('Display Name', false),
+                  inputText('Photo URL', false),
+                  inputText('Email', false),
+                  inputText('Password', true),
+                  saveButton(context),
+                ],
+              )),
+        ),
+      ),
+    );
+  }
+
   void doRegist() {
     formKey.currentState.save();
+
+    setState(() {
+      showLoadingIcon = true;
+    });
 
     authenticationService.createUser(user).then((user) {
       Navigator
@@ -100,30 +137,6 @@ class RegisterState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        key: scaffoldKey,
-        body: SingleChildScrollView(
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            padding: EdgeInsets.only(left: 25.0, right: 25.0),
-            decoration: new BoxDecoration(image: backgroundImage),
-            child: Center(
-              child: Form(
-                  key: formKey,
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: 100.0,
-                      ),
-                      inputText('Display Name', false),
-                      inputText('Photo URL', false),
-                      inputText('Email', false),
-                      inputText('Password', true),
-                      saveButton(context),
-                    ],
-                  )),
-            ),
-          ),
-        ));
+    return Scaffold(key: scaffoldKey, body: buildBody());
   }
 }

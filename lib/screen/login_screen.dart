@@ -20,11 +20,13 @@ class LoginScreenState extends State<LoginScreen> {
 
   User user;
   AuthenticationService authenticationService = AuthenticationService();
+  bool showLoadingIcon;
 
   @override
   void initState() {
     super.initState();
     user = User();
+    showLoadingIcon = false;
   }
 
   DecorationImage backgroundImage = DecorationImage(
@@ -101,6 +103,10 @@ class LoginScreenState extends State<LoginScreen> {
     formKey.currentState.save();
     formKey.currentState.reset();
 
+    setState(() {
+      showLoadingIcon = true;
+    });
+
     authenticationService.verifyUser(user).then((user) {
       Navigator
           .of(context)
@@ -114,29 +120,36 @@ class LoginScreenState extends State<LoginScreen> {
     });
   }
 
+  Widget buildbody() {
+    if (showLoadingIcon) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    return SingleChildScrollView(
+      child: Container(
+        height: MediaQuery.of(context).size.height,
+        padding: EdgeInsets.only(left: 25.0, right: 25.0),
+        decoration: new BoxDecoration(image: backgroundImage),
+        child: Center(
+          child: Form(
+              key: formKey,
+              child: Column(
+                children: <Widget>[
+                  logo,
+                  emailInputText(),
+                  passwordInputText(),
+                  loginButton(),
+                  registerText()
+                ],
+              )),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        key: scaffoldKey,
-        body: SingleChildScrollView(
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            padding: EdgeInsets.only(left: 25.0, right: 25.0),
-            decoration: new BoxDecoration(image: backgroundImage),
-            child: Center(
-              child: Form(
-                  key: formKey,
-                  child: Column(
-                    children: <Widget>[
-                      logo,
-                      emailInputText(),
-                      passwordInputText(),
-                      loginButton(),
-                      registerText()
-                    ],
-                  )),
-            ),
-          ),
-        ));
+    return Scaffold(key: scaffoldKey, body: buildbody());
   }
 }
