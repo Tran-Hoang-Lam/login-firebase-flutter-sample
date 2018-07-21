@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:login_firebase_flutter_example/model/user.dart';
+import 'package:login_firebase_flutter_example/resources/common_resource.dart';
 import 'package:login_firebase_flutter_example/screen/home_screen.dart';
 import 'package:login_firebase_flutter_example/screen/register_screen.dart';
 import 'package:login_firebase_flutter_example/service/authentication_service.dart';
@@ -28,18 +29,6 @@ class LoginScreenState extends State<LoginScreen> {
     user = User();
     showLoadingIcon = false;
   }
-
-  DecorationImage backgroundImage = DecorationImage(
-      image: ExactAssetImage('asset/blur-background-6z-800x1280.jpg'),
-      fit: BoxFit.cover);
-
-  Widget logo = Padding(
-      padding: EdgeInsets.only(top: 100.0, bottom: 20.0),
-      child: CircleAvatar(
-        backgroundColor: Colors.transparent,
-        radius: 90.0,
-        child: Image.asset('asset/flutter-logo-round.png'),
-      ));
 
   Widget emailInputText() => Padding(
       padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
@@ -123,7 +112,7 @@ class LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  Widget buildbody() {
+  Widget buildBody() {
     if (showLoadingIcon) {
       return Center(
         child: CircularProgressIndicator(),
@@ -133,13 +122,13 @@ class LoginScreenState extends State<LoginScreen> {
       child: Container(
         height: MediaQuery.of(context).size.height,
         padding: EdgeInsets.only(left: 25.0, right: 25.0),
-        decoration: new BoxDecoration(image: backgroundImage),
+        decoration: new BoxDecoration(image: CommonResource.backgroundImage),
         child: Center(
           child: Form(
               key: formKey,
               child: Column(
                 children: <Widget>[
-                  logo,
+                  CommonResource.defaultLogo,
                   emailInputText(),
                   passwordInputText(),
                   loginButton(),
@@ -153,6 +142,6 @@ class LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(key: scaffoldKey, body: buildbody());
+    return Scaffold(key: scaffoldKey, body: buildBody());
   }
 }

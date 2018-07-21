@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:login_firebase_flutter_example/model/user.dart';
+import 'package:login_firebase_flutter_example/resources/common_resource.dart';
 import 'package:login_firebase_flutter_example/screen/home_screen.dart';
 import 'package:login_firebase_flutter_example/service/authentication_service.dart';
 
@@ -20,10 +21,6 @@ class RegisterState extends State<RegisterScreen> {
   User user;
   AuthenticationService authenticationService = AuthenticationService();
   bool showLoadingIcon;
-
-  DecorationImage backgroundImage = DecorationImage(
-      image: ExactAssetImage('asset/blur-background-6z-800x1280.jpg'),
-      fit: BoxFit.cover);
 
   @override
   void initState() {
@@ -94,7 +91,7 @@ class RegisterState extends State<RegisterScreen> {
       child: Container(
         height: MediaQuery.of(context).size.height,
         padding: EdgeInsets.only(left: 25.0, right: 25.0),
-        decoration: new BoxDecoration(image: backgroundImage),
+        decoration: new BoxDecoration(image: CommonResource.backgroundImage),
         child: Center(
           child: Form(
               key: formKey,
@@ -133,7 +130,7 @@ class RegisterState extends State<RegisterScreen> {
         duration: Duration(seconds: 3),
       ));
       setState(() {
-        showLoadingIcon = true;
+        showLoadingIcon = false;
       });
     });
   }

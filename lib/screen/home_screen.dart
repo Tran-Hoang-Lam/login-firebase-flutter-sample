@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:login_firebase_flutter_example/app.dart';
+import 'package:login_firebase_flutter_example/resources/common_resource.dart';
 import 'package:login_firebase_flutter_example/service/authentication_service.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -10,18 +11,6 @@ class HomeScreen extends StatelessWidget {
   HomeScreen(FirebaseUser user) {
     this.user = user;
   }
-
-  DecorationImage backgroundImage = DecorationImage(
-      image: ExactAssetImage('asset/blur-background-6z-800x1280.jpg'),
-      fit: BoxFit.cover);
-
-  Widget logo(String url) => Padding(
-      padding: EdgeInsets.only(top: 100.0, bottom: 20.0),
-      child: CircleAvatar(
-        backgroundColor: Colors.transparent,
-        radius: 90.0,
-        child: url != null ? Image.network(url) : Image.asset('asset/flutter-logo-round.png'),
-      ));
 
   Widget infoText(String info) => Padding(
       padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
@@ -58,11 +47,11 @@ class HomeScreen extends StatelessWidget {
         child: Container(
           height: MediaQuery.of(context).size.height,
           padding: EdgeInsets.only(left: 25.0, right: 25.0),
-          decoration: new BoxDecoration(image: backgroundImage),
+          decoration: new BoxDecoration(image: CommonResource.backgroundImage),
           child: Center(
             child: Column(
               children: <Widget>[
-                logo(user.photoUrl),
+                CommonResource.logo(user.photoUrl),
                 infoText(user.uid),
                 infoText(user.displayName),
                 infoText(user.email),
