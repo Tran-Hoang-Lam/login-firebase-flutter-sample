@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:login_firebase_flutter_example/model/user.dart';
@@ -18,6 +21,8 @@ class LoginScreen extends StatefulWidget {
 class LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final int normalLogin = 0;
+  final int facebookLogin = 1;
 
   User user;
   AuthenticationService authenticationService = AuthenticationService();
@@ -62,7 +67,7 @@ class LoginScreenState extends State<LoginScreen> {
       ));
 
   Widget loginButton() => Padding(
-        padding: EdgeInsets.only(top: 30.0, bottom: 20.0),
+        padding: EdgeInsets.only(top: 30.0, bottom: 10.0),
         child: Material(
           borderRadius: BorderRadius.circular(30.0),
           child: MaterialButton(
@@ -70,10 +75,29 @@ class LoginScreenState extends State<LoginScreen> {
             elevation: 5.0,
             color: Colors.blue,
             onPressed: () {
-              doLogin();
+              doLogin(normalLogin);
             },
             child: Text(
               'Login',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
+      );
+
+  Widget loginFacebookButton() => Padding(
+        padding: EdgeInsets.only(top: 10.0, bottom: 20.0),
+        child: Material(
+          borderRadius: BorderRadius.circular(30.0),
+          child: MaterialButton(
+            minWidth: MediaQuery.of(context).size.width,
+            elevation: 5.0,
+            color: Colors.blue,
+            onPressed: () {
+              doLogin(facebookLogin);
+            },
+            child: Text(
+              'Use Facebook',
               style: TextStyle(color: Colors.white),
             ),
           ),
@@ -88,7 +112,7 @@ class LoginScreenState extends State<LoginScreen> {
         onPressed: () => Navigator.of(context).pushNamed(RegisterScreen.name),
       );
 
-  void doLogin() {
+  void doLogin(int loginType) {
     formKey.currentState.save();
     formKey.currentState.reset();
 
@@ -96,12 +120,19 @@ class LoginScreenState extends State<LoginScreen> {
       showLoadingIcon = true;
     });
 
-    authenticationService.verifyUser(user).then((user) {
+    Future<FirebaseUser> verifyUser;
+
+    if (loginType == normalLogin) {
+      verifyUser = authenticationService.verifyUser(user);
+    } else {
+      verifyUser = authenticationService.loginFacebook();
+    }
+
+    verifyUser.then((user) {
       Navigator
           .of(context)
           .push(MaterialPageRoute(builder: (context) => HomeScreen(user)));
     }).catchError((error) {
-      print(error);
       scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text('Login Fail!!! ' + error.message),
         duration: Duration(seconds: 3),
@@ -132,6 +163,7 @@ class LoginScreenState extends State<LoginScreen> {
                   emailInputText(),
                   passwordInputText(),
                   loginButton(),
+                  loginFacebookButton(),
                   registerText()
                 ],
               )),

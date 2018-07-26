@@ -16,6 +16,7 @@ dev_dependencies:
   firebase_database: any
   firebase_core: any
   firebase_auth: "^0.5.12"
+  flutter_facebook_login: ^1.1.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
