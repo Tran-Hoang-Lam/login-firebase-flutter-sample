@@ -15,8 +15,10 @@ dev_dependencies:
 
   firebase_database: any
   firebase_core: any
-  firebase_auth: "^0.5.12"
+  firebase_auth: ^0.5.12
+  firebase_storage: ^1.0.1
   flutter_facebook_login: ^1.1.1
+  image_picker: ^0.4.5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
@@ -32,6 +34,7 @@ flutter:
   assets:
     - asset/blur-background-6z-800x1280.jpg
     - asset/flutter-logo-round.png
+    - asset/blank_avatar.png
     - config.json
 
   # To add assets to your application, add an assets section, like this:

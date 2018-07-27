@@ -1,9 +1,14 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:login_firebase_flutter_example/model/user.dart';
 import 'package:login_firebase_flutter_example/resources/common_resource.dart';
 import 'package:login_firebase_flutter_example/screen/home_screen.dart';
 import 'package:login_firebase_flutter_example/service/authentication_service.dart';
+import 'package:login_firebase_flutter_example/service/firebase_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   static final String name = '/registerScreen';
@@ -21,6 +26,9 @@ class RegisterState extends State<RegisterScreen> {
   User user;
   AuthenticationService authenticationService = AuthenticationService();
   bool showLoadingIcon;
+  Future<File> image;
+
+  Image currentAvatar = Image.asset('assets/blank_avatar.png');
 
   @override
   void initState() {
@@ -30,21 +38,65 @@ class RegisterState extends State<RegisterScreen> {
   }
 
   saveValue(String value, String attribute) {
-    switch (attribute) {
-      case 'Email':
-        user.email = value;
-        break;
-      case 'Display Name':
-        user.displayName = value;
-        break;
-      case 'Photo URL':
-        user.photoUrl = value;
-        break;
-      case 'Password':
-        user.password = value;
-        break;
-    }
+    image.then((file) {
+      FirebaseService.uploadFile(file).then((url) {
+        switch (attribute) {
+          case 'Email':
+            user.email = value;
+            break;
+          case 'Display Name':
+            user.displayName = value;
+            break;
+          case 'Photo URL':
+            user.photoUrl = value;
+            break;
+          case 'Password':
+            user.password = value;
+            break;
+        }
+      });
+    });
   }
+
+  Widget avatarChooser() {
+    return FutureBuilder<File>(
+      future: image,
+      builder: (BuildContext context, AsyncSnapshot<File> snapshot) {
+        if (snapshot.connectionState == ConnectionState.done &&
+            snapshot.data != null) {
+          currentAvatar = Image.file(snapshot.data);
+        } else if (snapshot.error != null) {
+          scaffoldKey.currentState.showSnackBar(SnackBar(
+            content: Text('Fail to load image!!!'),
+            duration: Duration(seconds: 3),
+          ));
+        }
+
+        return imageViewer(currentAvatar);
+      },
+    );
+  }
+
+  Widget imageViewer(var displayImage) => Padding(
+        padding: EdgeInsets.only(top: 20.0),
+        child: Center(
+            child: Container(
+          width: 150.0,
+          height: 150.0,
+          child: Material(
+            child: MaterialButton(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints.expand(),
+                  child: displayImage,
+                ),
+                onPressed: () {
+                  setState(() {
+                    image = ImagePicker.pickImage(source: ImageSource.gallery);
+                  });
+                }),
+          ),
+        )),
+      );
 
   Widget inputText(String hintText, bool hideCharacter) => Padding(
       padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
@@ -100,6 +152,7 @@ class RegisterState extends State<RegisterScreen> {
                   SizedBox(
                     height: 100.0,
                   ),
+                  avatarChooser(),
                   inputText('Display Name', false),
                   inputText('Photo URL', false),
                   inputText('Email', false),
@@ -113,11 +166,11 @@ class RegisterState extends State<RegisterScreen> {
   }
 
   void doRegist() {
-    formKey.currentState.save();
-
     setState(() {
       showLoadingIcon = true;
     });
+
+    formKey.currentState.save();
 
     authenticationService.createUser(user).then((user) {
       Navigator
