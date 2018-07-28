@@ -10,36 +10,38 @@ class FirebaseService {
   static FirebaseDatabase firebaseDatabase;
   static FirebaseStorage firebaseStorage;
 
-  final Future<FirebaseApp> firebaseApp = FirebaseApp
-      .configure(
-          name: 'db',
-          options: FirebaseOptions(
-              googleAppID: ApplicationConfiguration.configMap['googleAppID'],
-              apiKey: ApplicationConfiguration.configMap['apiKey'],
-              projectID: 'user-database-ed222',
-              gcmSenderID: '972682480781'))
-      .then((app) {
-    firebaseDatabase = FirebaseDatabase(
-        app: app,
-        databaseURL: ApplicationConfiguration.configMap['databaseURL']);
-    firebaseStorage = FirebaseStorage(
-        app: app,
-        storageBucket: ApplicationConfiguration.configMap['storageBucket']);
-  });
+  final Future<FirebaseApp> firebaseApp = FirebaseApp.configure(
+      name: 'db',
+      options: FirebaseOptions(
+          googleAppID: ApplicationConfiguration.configMap['googleAppID'],
+          apiKey: ApplicationConfiguration.configMap['apiKey'],
+          projectID: 'user-database-ed222',
+          gcmSenderID: '972682480781'));
 
-  FirebaseService.initDatabase() {
-    firebaseApp;
+  initDatabase() {
+    firebaseApp.then((app) {
+      firebaseDatabase = FirebaseDatabase(
+          app: app,
+          databaseURL: ApplicationConfiguration.configMap['databaseURL']);
+      firebaseStorage = FirebaseStorage(
+          app: app,
+          storageBucket: ApplicationConfiguration.configMap['storageBucket']);
+    });
   }
 
   static Future<String> uploadFile(File file) async {
     try {
-      String path = file.path.substring(file.path.lastIndexOf("/") + 1);
-      StorageUploadTask uploadTask =
-          firebaseStorage.ref().child('images').child(path).putFile(file);
+      if (!file.path.startsWith("asset")) {
+        String path = file.path.substring(file.path.lastIndexOf("/") + 1);
+        StorageUploadTask uploadTask =
+            firebaseStorage.ref().child('images').child(path).putFile(file);
 
-      UploadTaskSnapshot snapshot = await uploadTask.future;
-      Uri downloadUri = snapshot.downloadUrl;
-      return downloadUri.toString();
+        UploadTaskSnapshot snapshot = await uploadTask.future;
+        Uri downloadUri = snapshot.downloadUrl;
+        return downloadUri.toString();
+      } else {
+        return '';
+      }
     } catch (error) {
       throw error;
     }
