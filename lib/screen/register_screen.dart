@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -28,7 +29,7 @@ class RegisterState extends State<RegisterScreen> {
   bool showLoadingIcon;
   Future<File> image;
 
-  Image currentAvatar = Image.asset('assets/blank_avatar.png');
+  Image currentAvatar = Image.asset('asset/blank_avatar.png');
 
   @override
   void initState() {
@@ -38,24 +39,17 @@ class RegisterState extends State<RegisterScreen> {
   }
 
   saveValue(String value, String attribute) {
-    image.then((file) {
-      FirebaseService.uploadFile(file).then((url) {
-        switch (attribute) {
-          case 'Email':
-            user.email = value;
-            break;
-          case 'Display Name':
-            user.displayName = value;
-            break;
-          case 'Photo URL':
-            user.photoUrl = value;
-            break;
-          case 'Password':
-            user.password = value;
-            break;
-        }
-      });
-    });
+    switch (attribute) {
+      case 'Email':
+        user.email = value;
+        break;
+      case 'Display Name':
+        user.displayName = value;
+        break;
+      case 'Password':
+        user.password = value;
+        break;
+    }
   }
 
   Widget avatarChooser() {
@@ -84,6 +78,7 @@ class RegisterState extends State<RegisterScreen> {
           width: 150.0,
           height: 150.0,
           child: Material(
+            color: Colors.transparent,
             child: MaterialButton(
                 child: ConstrainedBox(
                   constraints: BoxConstraints.expand(),
@@ -154,7 +149,6 @@ class RegisterState extends State<RegisterScreen> {
                   ),
                   avatarChooser(),
                   inputText('Display Name', false),
-                  inputText('Photo URL', false),
                   inputText('Email', false),
                   inputText('Password', true),
                   saveButton(context),
@@ -172,19 +166,36 @@ class RegisterState extends State<RegisterScreen> {
 
     formKey.currentState.save();
 
-    authenticationService.createUser(user).then((user) {
-      Navigator
-          .of(context)
-          .push(MaterialPageRoute(builder: (context) => HomeScreen(user)));
-    }).catchError((error) {
-      print(error);
-      scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text('Register Fail!!! ' + error.message),
-        duration: Duration(seconds: 3),
-      ));
-      setState(() {
-        showLoadingIcon = false;
+    authenticationService.loginForUpload().then((user){
+      image.then((imageFile){
+        FirebaseService.uploadFile(imageFile).then((imageUrl){
+          this.user.photoUrl = imageUrl;
+          authenticationService.createUser(this.user).then((user) {
+            Navigator
+                .of(context)
+                .push(MaterialPageRoute(builder: (context) => HomeScreen(user)));
+          }).catchError((error){
+            handleException(error, "Register Fail!!!");
+          });
+        }).catchError((error){
+          handleException(error, "Upload Fail!!!");
+        });
+      }).catchError((error){
+        handleException(error, "Get image Fail!!!");
       });
+    }).catchError((error){
+      handleException(error, "Login for upload Fail!!!");
+    });
+  }
+
+  void handleException(error, String message) {
+    print(error.toString());
+    scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(message),
+      duration: Duration(seconds: 5),
+    ));
+    setState(() {
+      showLoadingIcon = false;
     });
   }
 

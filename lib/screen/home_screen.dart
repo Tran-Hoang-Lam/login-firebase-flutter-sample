@@ -28,7 +28,7 @@ class HomeScreen extends StatelessWidget {
             elevation: 5.0,
             color: Colors.blue,
             onPressed: () {
-              AuthenticationService.firebaseAuth.signOut().then((value) {
+              AuthenticationService().signOut().then((value) {
                 Navigator.of(context).pushNamed(App.main_page);
               });
             },

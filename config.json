@@ -1,5 +1,8 @@
 {
   "googleAppID": "1:972682480781:android:99f241b606307a18",
   "databaseURL": "https://user-database-ed222.firebaseio.com",
-  "apiKey": "AIzaSyCs0ii_-8ZtRm1pl1uido-BQlF16KwyoyI"
+  "apiKey": "AIzaSyCs0ii_-8ZtRm1pl1uido-BQlF16KwyoyI",
+  "storageBucket" : "gs://user-database-ed222.appspot.com",
+  "uploadUsername" : "hoang_lam_33@yahoo.com",
+  "uploadPassword" : "Abc123#@!"
 }

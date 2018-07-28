@@ -16,12 +16,15 @@ class FirebaseService {
           options: FirebaseOptions(
               googleAppID: ApplicationConfiguration.configMap['googleAppID'],
               apiKey: ApplicationConfiguration.configMap['apiKey'],
-              databaseURL: ApplicationConfiguration.configMap['databaseURL']))
+              projectID: 'user-database-ed222',
+              gcmSenderID: '972682480781'))
       .then((app) {
-    firebaseDatabase = FirebaseDatabase(app: app);
-    firebaseDatabase.reference().child('');
+    firebaseDatabase = FirebaseDatabase(
+        app: app,
+        databaseURL: ApplicationConfiguration.configMap['databaseURL']);
     firebaseStorage = FirebaseStorage(
-        app: app, storageBucket: 'gs://user-database-ed222.appspot.com');
+        app: app,
+        storageBucket: ApplicationConfiguration.configMap['storageBucket']);
   });
 
   FirebaseService.initDatabase() {
@@ -29,12 +32,16 @@ class FirebaseService {
   }
 
   static Future<String> uploadFile(File file) async {
-    StorageUploadTask uploadTask = firebaseStorage
-        .ref()
-        .child('images')
-        .child(file.path)
-        .putFile(file, StorageMetadata(contentLanguage: 'en'));
+    try {
+      String path = file.path.substring(file.path.lastIndexOf("/") + 1);
+      StorageUploadTask uploadTask =
+          firebaseStorage.ref().child('images').child(path).putFile(file);
 
-    return (await uploadTask.future).downloadUrl.toString();
+      UploadTaskSnapshot snapshot = await uploadTask.future;
+      Uri downloadUri = snapshot.downloadUrl;
+      return downloadUri.toString();
+    } catch (error) {
+      throw error;
+    }
   }
 }
