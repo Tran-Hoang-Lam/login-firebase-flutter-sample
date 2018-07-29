@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -166,25 +165,33 @@ class RegisterState extends State<RegisterScreen> {
 
     formKey.currentState.save();
 
-    authenticationService.loginForUpload().then((user){
-      image.then((imageFile){
-        FirebaseService.uploadFile(imageFile).then((imageUrl){
-          this.user.photoUrl = imageUrl;
-          authenticationService.createUser(this.user).then((user) {
-            Navigator
-                .of(context)
-                .push(MaterialPageRoute(builder: (context) => HomeScreen(user)));
-          }).catchError((error){
-            handleException(error, "Register Fail!!!");
+    if (image != null) {
+      authenticationService.loginForUpload().then((user) {
+        image.then((imageFile) {
+          FirebaseService.uploadFile(imageFile).then((imageUrl) {
+            this.user.photoUrl = imageUrl;
+            createUserAndGotoHomepage(context);
+          }).catchError((error) {
+            handleException(error, "Upload Fail!!!");
           });
-        }).catchError((error){
-          handleException(error, "Upload Fail!!!");
+        }).catchError((error) {
+          handleException(error, "Get image Fail!!!");
         });
-      }).catchError((error){
-        handleException(error, "Get image Fail!!!");
+      }).catchError((error) {
+        handleException(error, "Login for upload Fail!!!");
       });
-    }).catchError((error){
-      handleException(error, "Login for upload Fail!!!");
+    } else {
+      createUserAndGotoHomepage(context);
+    }
+  }
+
+  void createUserAndGotoHomepage(BuildContext context) {
+    authenticationService.createUser(this.user).then((user) {
+      Navigator
+          .of(context)
+          .push(MaterialPageRoute(builder: (context) => HomeScreen(user)));
+    }).catchError((error) {
+      handleException(error, "Register Fail!!!");
     });
   }
 

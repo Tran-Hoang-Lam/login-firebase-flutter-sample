@@ -16,16 +16,14 @@ class FirebaseService {
           googleAppID: ApplicationConfiguration.configMap['googleAppID'],
           apiKey: ApplicationConfiguration.configMap['apiKey'],
           projectID: 'user-database-ed222',
-          gcmSenderID: '972682480781'));
+          gcmSenderID: '972682480781',
+          storageBucket: ApplicationConfiguration.configMap['storageBucket'],
+          databaseURL: ApplicationConfiguration.configMap['databaseURL']));
 
   initDatabase() {
     firebaseApp.then((app) {
-      firebaseDatabase = FirebaseDatabase(
-          app: app,
-          databaseURL: ApplicationConfiguration.configMap['databaseURL']);
-      firebaseStorage = FirebaseStorage(
-          app: app,
-          storageBucket: ApplicationConfiguration.configMap['storageBucket']);
+      firebaseDatabase = FirebaseDatabase(app: FirebaseApp(name: 'db'));
+      firebaseStorage = FirebaseStorage(app: FirebaseApp(name: 'db'));
     });
   }
 
