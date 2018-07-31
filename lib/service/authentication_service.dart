@@ -44,7 +44,7 @@ class AuthenticationService {
           email: user.email, password: user.password);
       UserUpdateInfo userUpdateInfo = UserUpdateInfo();
       userUpdateInfo.displayName =
-      user.displayName == null ? '' : user.displayName;
+          user.displayName == null ? '' : user.displayName;
       userUpdateInfo.photoUrl = user.photoUrl == null ? '' : user.photoUrl;
       await firebaseAuth.updateProfile(userUpdateInfo);
 
@@ -67,5 +67,9 @@ class AuthenticationService {
 
   Future<void> signOut() {
     return firebaseAuth.signOut();
+  }
+
+  Future<void> sendResetPasswordMail(String email) {
+    return firebaseAuth.sendPasswordResetEmail(email: email);
   }
 }

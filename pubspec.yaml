@@ -19,6 +19,7 @@ dev_dependencies:
   firebase_storage: ^1.0.1
   flutter_facebook_login: ^1.1.1
   image_picker: ^0.4.5
+  validate: ^1.6.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec

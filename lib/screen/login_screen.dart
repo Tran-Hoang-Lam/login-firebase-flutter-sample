@@ -7,6 +7,7 @@ import 'package:login_firebase_flutter_example/model/user.dart';
 import 'package:login_firebase_flutter_example/resources/common_resource.dart';
 import 'package:login_firebase_flutter_example/screen/home_screen.dart';
 import 'package:login_firebase_flutter_example/screen/register_screen.dart';
+import 'package:login_firebase_flutter_example/screen/reset_password_screen.dart';
 import 'package:login_firebase_flutter_example/service/authentication_service.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -112,6 +113,15 @@ class LoginScreenState extends State<LoginScreen> {
         onPressed: () => Navigator.of(context).pushNamed(RegisterScreen.name),
       );
 
+  Widget forgotPasswordText() => FlatButton(
+        child: Text(
+          'Forgot password?',
+          style: TextStyle(color: Colors.white),
+        ),
+        onPressed: () =>
+            Navigator.of(context).pushNamed(ResetPasswordScreen.name),
+      );
+
   void doLogin(int loginType) {
     formKey.currentState.save();
     formKey.currentState.reset();
@@ -164,7 +174,8 @@ class LoginScreenState extends State<LoginScreen> {
                   passwordInputText(),
                   loginButton(),
                   loginFacebookButton(),
-                  registerText()
+                  registerText(),
+                  forgotPasswordText()
                 ],
               )),
         ),
